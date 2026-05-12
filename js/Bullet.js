@@ -1,8 +1,11 @@
+import { HALF_WIDTH } from "./constants.js";
+
 export default class Bullet {
     constructor(x, y, direction) {
         this.x = x;
         this.y = y;
         this.direction = direction;
+        this.speed = 20;
     }
 
     draw(ctx) {
@@ -13,7 +16,7 @@ export default class Bullet {
     }
     
     shoot() {
-        this.x += this.direction ? 20 : -20; 
+        this.x += (this.direction ? 1: -1) * this.speed; 
     }
 
 }

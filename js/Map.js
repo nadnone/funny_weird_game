@@ -1,9 +1,10 @@
-import { HEIGHT, WIDTH } from "./constants.js";
+import { COL_PER_VIEW, HALF_WIDTH, HEIGHT, MAP_LENGTH, ROW_PER_VIEW, WIDTH } from "./constants.js";
+import Player from "./Player.js";
 
 export default class Map {
     constructor() {
-        this.width = 100;
-        this.height = 100;
+        this.blockWdith = 100;
+        this.blockHeight = 100;
         this.seeds = [];
 
 
@@ -16,12 +17,17 @@ export default class Map {
         this.block = new Image();
         this.block.src = './assets/upper_block.png'
 
+        this.generate();
+
+    }
+
+    generate() {
 
         // generate seeds 
-        for (let i = 0; i < 4; i++) { // 4 = niveau de blocks
+        for (let i = 0; i < COL_PER_VIEW * MAP_LENGTH; i++) {
 
             let row = [];
-            for (let j = 0; j < Math.floor(WIDTH / this.width); j++) { 
+            for (let j = 0; j < ROW_PER_VIEW; j++) { 
 
                 // genere un booleen aleatoire
                 const random = (Math.random() * 2) > 1 ? true : false
@@ -29,41 +35,42 @@ export default class Map {
             }
             this.seeds.push(row);
         }
-
+        
     }
 
-    draw(ctx) {
+    draw(ctx, player) {
 
 
         // static blocks
-        for (let i = 0; i < WIDTH; i+= this.width) {
+        for (let i = 0; i < WIDTH; i+= this.blockWdith) {
             
             // ground
-            ctx.drawImage(this.ground, i, HEIGHT - this.height, this.width, this.height);
+            ctx.drawImage(this.ground, i, HEIGHT - this.blockHeight, this.blockWdith, this.blockHeight);
            
             // sky
-            ctx.drawImage(this.sky, i, 0, this.width, this.height);
+            ctx.drawImage(this.sky, i, 0, this.blockWdith, this.blockHeight);
                         
         }
 
 
         // dynamic blocks
-        for (let i = 0; i < Math.floor(WIDTH / this.width); i++) {
 
-            for (let j = 0; j < this.seeds[0].length; j++) {
+        // kernel
+
+        const mapindex = Math.floor((MAP_LENGTH * COL_PER_VIEW) / ( player.x ))
+        const seedIndex = Math.floor(this.seeds.length / ( mapindex + 1 )) 
+
+        for (let heightIndex = 0; heightIndex < ROW_PER_VIEW; heightIndex++) {
             
-                
-                // si il y a un blocks
-                if (this.seeds[i] == null)
-                    return;
-
-                if (this.seeds[i][j])
-                {
-                    // on dessine les blocks
-                    ctx.drawImage(this.block, j * this.width, HEIGHT - (this.height * 4) / i, this.width, this.height);
+            // convert to screen positions
+            for (let widthIndex = seedIndex; widthIndex < COL_PER_VIEW * MAP_LENGTH; widthIndex++) {
+            
+                if (this.seeds[widthIndex][heightIndex]) {                    
+                    ctx.drawImage(this.block, (widthIndex - seedIndex) * this.blockWdith, HEIGHT - this.blockHeight * heightIndex, this.blockWdith, this.blockHeight);
                 }
                 
             }
+                
         }
 
     }

@@ -1,5 +1,5 @@
 import Bullet from "./Bullet.js";
-import { HEIGHT, MAX_VELOCITY } from "./constants.js";
+import { COL_PER_VIEW, HEIGHT, MAP_LENGTH, MAX_VELOCITY, WIDTH } from "./constants.js";
 
 export default class Player {
     constructor(x, y) {
@@ -74,14 +74,8 @@ export default class Player {
         }
     }
 
-    update(timer) {
-        if (this.shooting && !this.gun_locked) {
-            this.gun.shoot(this, timer);
-        }
-        else if (this.gun_locked && timer % this.gun.cooldown <= 0) {
-            this.gun_locked = false;
-        }
-
+    shoot(timer) {
+        this.gun.shoot(this, timer);
     }
 
     animation(timer) {
@@ -90,9 +84,9 @@ export default class Player {
 
     draw(ctx, timer) {
 
-        const image = this.animation(timer);
-
-        ctx.drawImage(image, this.x, this.y - this.height, this.width, this.height);
+        const image = this.animation(timer); // pour dessiner les animations
+        ctx.drawImage(image, WIDTH/2, this.y - this.height, this.width, this.height);
+        this.gun.draw(ctx)
     }
 
     move() { 
@@ -151,6 +145,14 @@ export default class Player {
             }
 
         }
+            if (this.x <= 1) {
+                this.x = 10;
+                this.velocity.x = 0;
+            }
+            if (this.x > MAP_LENGTH * COL_PER_VIEW) {
+                this.x = MAP_LENGTH * COL_PER_VIEW - 10
+                this.velocity.x = 0;
+            }
 
             this.x += this.velocity.x;
             this.y += this.velocity.y;
