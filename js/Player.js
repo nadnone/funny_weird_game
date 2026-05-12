@@ -1,5 +1,5 @@
 import Bullet from "./Bullet.js";
-import { COL_PER_VIEW, HEIGHT, MAP_LENGTH, MAX_VELOCITY, WIDTH } from "./constants.js";
+import { COL_PER_VIEW, HALF_WIDTH, HEIGHT, MAP_LENGTH, MAP_ROW_SIZE, MAX_VELOCITY, WALK_SPEED, WIDTH } from "./constants.js";
 
 export default class Player {
     constructor(x, y) {
@@ -82,10 +82,10 @@ export default class Player {
         return this.animations[this.animID][timer % 20];
     }
 
-    draw(ctx, timer) {
+    async draw(ctx, timer) {
 
         const image = this.animation(timer); // pour dessiner les animations
-        ctx.drawImage(image, WIDTH/2, this.y - this.height, this.width, this.height);
+        ctx.drawImage(image, HALF_WIDTH, this.y - this.height, this.width, this.height);
         this.gun.draw(ctx)
     }
 
@@ -94,7 +94,7 @@ export default class Player {
         if (this.jumping) {
 
 
-            this.velocity.y += 10;
+            this.velocity.y += WALK_SPEED;
 
 
             // animation logic
@@ -149,8 +149,8 @@ export default class Player {
                 this.x = 10;
                 this.velocity.x = 0;
             }
-            if (this.x > MAP_LENGTH * COL_PER_VIEW) {
-                this.x = MAP_LENGTH * COL_PER_VIEW - 10
+            if (this.x > MAP_ROW_SIZE) {
+                this.x = MAP_ROW_SIZE - 10
                 this.velocity.x = 0;
             }
 

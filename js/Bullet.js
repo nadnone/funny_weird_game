@@ -1,5 +1,3 @@
-import { HALF_WIDTH } from "./constants.js";
-
 export default class Bullet {
     constructor(x, y, direction) {
         this.x = x;
@@ -9,6 +7,7 @@ export default class Bullet {
     }
 
     draw(ctx) {
+
         ctx.beginPath();
         ctx.fillStyle = "red";
         ctx.arc(this.x, this.y, 2.5, 0, 2 * Math.PI);

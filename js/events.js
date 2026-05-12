@@ -1,3 +1,4 @@
+import { ctx } from "./constants.js";
 
 function keyboardInputs_getter(player) {
 
@@ -20,6 +21,7 @@ function keyboardInputs_getter(player) {
         if (event.code === 'ShiftRight') {
             player.shooting = true;
         }
+
 
     });
 

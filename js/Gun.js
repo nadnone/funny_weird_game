@@ -8,7 +8,7 @@ export default class Gun {
         this.y = player.y;
         this.bullets = [];
         this.fire_rate = FIRE_RATE_MAX;
-        this.cooldown = 3;
+        this.cooldown = 20;
 
     }
 
@@ -34,8 +34,8 @@ export default class Gun {
         const bool_direction = player.animID.includes("right") ? true : false;
 
         let bullet = new Bullet(
-                HALF_WIDTH + (bool_direction ? player.width : 0),
-                player.y - 25 - player.height / 2,
+                parseInt(HALF_WIDTH + (bool_direction ? player.width : 0)),
+                parseInt(player.y - 25 - player.height / 2),
                 bool_direction
             );
         this.bullets.push(bullet);

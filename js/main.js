@@ -4,8 +4,6 @@ import Player from "./Player.js";
 import Gun from "./Gun.js";
 import Map from "./Map.js";
 
-let animation_timer = 0;
-let timer_shoot = 0;
 
 // pour être sur des valeurs du canvas
 const dpr = window.devicePixelRatio || 1;
@@ -21,26 +19,21 @@ keyboardInputs_getter(player);
 
 const map = new Map();
 
-let delta = 0;
-function mainloop() {
+let timer = 0;
+let shoot_timer = 0;
+let walk_timer = 0;
 
-        const t0 = performance.now();
+async function mainloop() {
 
-        // animations timer
-
-        timer_shoot += delta / 100 
-        animation_timer += parseInt(delta / 4)
-
-        if (animation_timer > 20) {
-            animation_timer = 0;
-        }
-        if (timer_shoot > 3) {
-            timer_shoot = 0;
-        }
-        
         // refresh
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
+
+        // animations timer
+        const t0 = new Date().getMilliseconds().toPrecision(3);
+        walk_timer++
+        if (walk_timer > 20) {
+            walk_timer = 0;
+        }
 
 
         // map
@@ -49,20 +42,21 @@ function mainloop() {
 
         // player logic
         player.move();
-        player.draw(ctx, animation_timer);
+        player.draw(ctx, walk_timer);
         if (player.shooting) {
-            player.shoot(timer_shoot);
+            player.shoot(shoot_timer);
         }
 
+        if (++timer >= 1000)
+        {
+            timer = 0;
+        }
 
-        requestAnimationFrame(mainloop)
-        delta = performance.now() - t0;
-
+        shoot_timer += new Date().getMilliseconds().toPrecision(3) - t0
+        
+        if (shoot_timer > 1000) {
+            shoot_timer = 0;
+        }
 }
 
-
-canvas.width = WIDTH;
-canvas.height = HEIGHT;
-
-requestAnimationFrame(mainloop);
-//setInterval(mainloop, 1000 / 24); // 24 FPS
+setInterval(mainloop, 1000 / 72); // 72 FPS = 144 MHz
