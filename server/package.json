@@ -1,0 +1,15 @@
+{
+  "name": "server-funny-weird-game",
+  "version": "1.0.0",
+  "description": "just a server",
+  "license": "MIT",
+  "author": "Nadir Felder",
+  "type": "module",
+  "main": "main.js",
+  "scripts": {
+    "dev": "node ./main.js"
+  },
+  "dependencies": {
+    "socket.io": "^4.8.3"
+  }
+}

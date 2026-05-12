@@ -38,21 +38,22 @@ export default class Map {
     async draw(ctx, player) {
 
         // static block
-        ctx.beginPath();
         ctx.drawImage(this.wallpapper, 0,0, WIDTH, HEIGHT);
            
         // dynamic blocks
         // kernel
-        const seedIndex = Math.floor(this.seeds.length / player.x) 
+        const seedIndex = Math.floor(this.seeds.length / parseInt(player.x)) 
 
         for (let heightIndex = 0; heightIndex < ROW_PER_VIEW; heightIndex++) {
             
+            if (seedIndex + WIDTH > MAP_ROW_SIZE)
+                continue
+
             // convert to screen positions
-            for (let widthIndex = seedIndex; widthIndex < MAP_ROW_SIZE; widthIndex++) {
+            for (let widthIndex = seedIndex; widthIndex < seedIndex + WIDTH ; widthIndex++) {
             
                 if (this.seeds[widthIndex][heightIndex]) {                    
-                    ctx.drawImage(this.block, (widthIndex - seedIndex) * this.blockWdith, HEIGHT - this.blockHeight * heightIndex, this.blockWdith, this.blockHeight);
-                    ctx.closePath();
+                    ctx.drawImage(this.block, parseInt(widthIndex - seedIndex) * this.blockWdith, HEIGHT - this.blockHeight * heightIndex, this.blockWdith, this.blockHeight);
                 }
                 
             }

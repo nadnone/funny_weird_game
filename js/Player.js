@@ -1,5 +1,5 @@
 import Bullet from "./Bullet.js";
-import { COL_PER_VIEW, HALF_WIDTH, HEIGHT, MAP_LENGTH, MAP_ROW_SIZE, MAX_VELOCITY, WALK_SPEED, WIDTH } from "./constants.js";
+import { ctx, COL_PER_VIEW, HALF_WIDTH, HEIGHT, MAP_LENGTH, MAP_ROW_SIZE, MAX_VELOCITY as MAX_JUMP_VELOCITY, MAX_WALK_VELOCITY, WALK_SPEED, WIDTH } from "./constants.js";
 
 export default class Player {
     constructor(x, y) {
@@ -12,6 +12,7 @@ export default class Player {
         this.gun = null;
         this.shooting = false;
         this.gun_locked = false;
+        this.anim_cache = null;
 
         this.images = {
             "jmp_left": "./assets/jump_left/",
@@ -31,36 +32,34 @@ export default class Player {
         }
         this.animID = "idle_right";
 
-        this.load_images();
     }
 
-
-    load_images() {
+    async load_images() {
 
        for (let i = 0; i < 20; i++) {
             
             // walk right
-            let img_walk_right = new Image();
+            const img_walk_right = new Image();
             img_walk_right.src = this.images.walk_right + "image" + "0".repeat(4 - i.toString().length) + i + ".png";
 
             // walk left
-            let img__walk_left = new Image();
+            const img__walk_left = new Image();
             img__walk_left.src = this.images.walk_left + "image" + "0".repeat(4 - i.toString().length) + i + ".png";
         
             // idle right
-            let img_idle_right = new Image();
+            const img_idle_right = new Image();
             img_idle_right.src = this.images.idle_right + "image" + "0".repeat(4 - i.toString().length) + i + ".png";
 
             // idle left
-            let img_idle_left = new Image();
+            const img_idle_left = new Image();
             img_idle_left.src = this.images.idle_left + "image" + "0".repeat(4 - i.toString().length) + i + ".png";
 
             // jump right
-            let img_jmp_right = new Image();
+            const img_jmp_right = new Image();
             img_jmp_right.src = this.images.jmp_right + "image" + "0".repeat(4 - i.toString().length) + i + ".png";
 
             // jump left
-            let img_jmp_left = new Image();
+            const img_jmp_left = new Image();
             img_jmp_left.src = this.images.jmp_left + "image" + "0".repeat(4 - i.toString().length) + i + ".png";
 
 
@@ -71,6 +70,9 @@ export default class Player {
             this.animations.idle_left.push(img_idle_left);
             this.animations.walk_right.push(img_walk_right);
             this.animations.walk_left.push(img__walk_left);
+
+
+            this.anim_cache = this.animation(this.animID)[0]
         }
     }
 
@@ -78,14 +80,22 @@ export default class Player {
         this.gun.shoot(this, timer);
     }
 
-    animation(timer) {
-        return this.animations[this.animID][timer % 20];
+    async animation(timer) {
+        return this.animations[this.animID][parseInt(timer)];
     }
 
-    async draw(ctx, timer) {
+    async draw(timer) {
 
-        const image = this.animation(timer); // pour dessiner les animations
-        ctx.drawImage(image, HALF_WIDTH, this.y - this.height, this.width, this.height);
+        let img = await this.animation(timer); // pour dessiner les animations
+        
+        // cache au cas ou l'image prend du temps ä charger 
+        if (img == null)
+            img = this.anim_cache
+        else if (img != null)
+            this.anim_cache = img;
+        
+        
+        ctx.drawImage(img, HALF_WIDTH, this.y - this.height, this.width, this.height);
         this.gun.draw(ctx)
     }
 
@@ -103,13 +113,12 @@ export default class Player {
             } else if (this.velocity.x <= 0) {
                 this.animID = "jmp_left";
             }
-
             // jumping logic 
-            if (this.velocity.y >= MAX_VELOCITY) {
-                this.velocity.y = MAX_VELOCITY;
+            if (this.velocity.y >= MAX_JUMP_VELOCITY) {
+                this.velocity.y = MAX_JUMP_VELOCITY;
             }
-            else if (this.velocity.y <= -MAX_VELOCITY) {
-                this.velocity.y = -MAX_VELOCITY;
+            else if (this.velocity.y <= -MAX_JUMP_VELOCITY) {
+                this.velocity.y = -MAX_JUMP_VELOCITY;
             }
 
             if (this.y > HEIGHT) {
@@ -154,7 +163,19 @@ export default class Player {
                 this.velocity.x = 0;
             }
 
-            this.x += this.velocity.x;
+
+
+            if (this.velocity.x > MAX_WALK_VELOCITY)
+            {
+                this.velocity.x = MAX_WALK_VELOCITY;
+            }
+            else if (this.velocity.x < -MAX_WALK_VELOCITY)
+            {
+                this.velocity.x = -MAX_WALK_VELOCITY;
+            }
+
+
+            this.x -= this.velocity.x;
             this.y += this.velocity.y;
 
     }

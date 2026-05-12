@@ -1,4 +1,4 @@
-import { ctx } from "./constants.js";
+import { ctx, WALK_SPEED } from "./constants.js";
 
 function keyboardInputs_getter(player) {
 
@@ -7,10 +7,10 @@ function keyboardInputs_getter(player) {
         let direction = {"x": 0, "y": 0};    
     
         if (event.code === 'KeyA') {
-            player.velocity.x = -10 
+            player.velocity.x = -WALK_SPEED 
         }
         if (event.code === 'KeyD') {
-            player.velocity.x = 10
+            player.velocity.x = WALK_SPEED
         }
         
         if (event.code === 'Space' && !player.jumping) { 
