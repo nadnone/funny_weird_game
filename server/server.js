@@ -15,10 +15,8 @@ map.generate();
 
 io.on("connection", (socket) => {
 
-    socket.on("get_map_chunk", (x) => {
+    socket.on("get_players_pos", (players) => {
 
-        const chunk = map.get_map_chunk(x);
-        socket.emit("give_map_chunk", chunk)
     });
 
    

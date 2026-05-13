@@ -5,9 +5,9 @@
   "license": "MIT",
   "author": "Nadir Felder",
   "type": "module",
-  "main": "main.js",
+  "main": "server.js",
   "scripts": {
-    "dev": "node ./main.js"
+    "dev": "node ./server.js"
   },
   "dependencies": {
     "socket.io": "^4.8.3"

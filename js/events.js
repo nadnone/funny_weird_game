@@ -18,7 +18,7 @@ function keyboardInputs_getter(player) {
             player.jumping = true;
         }
 
-        if (event.code === 'ShiftRight') {
+        if (event.code === 'Enter') {
             player.shooting = true;
         }
 
@@ -36,7 +36,7 @@ function keyboardInputs_getter(player) {
             player.velocity.x = 0;
         }
 
-        if (event.code === 'ShiftRight') {
+        if (event.code === 'Enter') {
             player.shooting = false;
         }
 
